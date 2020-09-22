@@ -14,8 +14,12 @@ endif()
 
 target_link_libraries(cdds-util ddsc)
 
-add_executable(bsub example/blob_subscriber.c)
-target_link_libraries(bsub ddsc cdds-util)
+option(BUILD_CDDS_UTIL_EXAMPLES "Build cdds-util examples" OFF)
+if(BUILD_CDDS_UTIL_EXAMPLES)
+    add_executable(bsub example/blob_subscriber.c)
+    target_link_libraries(bsub ddsc cdds-util)
+    install(TARGETS bsub DESTINATION bin)
+endif()
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
