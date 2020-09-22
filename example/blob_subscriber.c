@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
   char* partition = NULL;
 
   if (argc < 4) {
-    printf("USAGE:\n\tsub <topic-name> <type_name> <1|0, 1 => keyless and 0 => keyed> [<partition>]\n");
+    printf("USAGE:\n\tbsub <topic-name> <type_name> <1|0, 1 => keyless and 0 => keyed> [<partition>]\n");
     exit(1);
   }
   if (argc > 4) {

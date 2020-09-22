@@ -1,5 +1,31 @@
 #include "cdds/cdds_util.h"
 
+struct cdds_ddsi_payload* cdds_ddsi_payload_create(struct ddsi_sertopic *st, enum ddsi_serdata_kind kind, unsigned char* buf, size_t size) {
+  struct cdds_ddsi_payload* p = (struct cdds_ddsi_payload*)malloc(sizeof(struct cdds_ddsi_payload));
+  ddsi_serdata_init(&p->sd, st, kind);
+  p->kind = kind;
+  p->payload = buf;
+  p->size = size;
+  return p;
+}
+
+void cdds_ddsi_payload_free(struct cdds_ddsi_payload* p) {
+  free(p);
+}
+
+unsigned char* cdds_ddsi_payload_get(struct cdds_ddsi_payload* p) {
+  return p->payload;
+}
+
+size_t cdds_ddsi_payload_len(struct cdds_ddsi_payload* p) {
+  return p->size;
+}
+
+enum ddsi_serdata_kind cdds_ddsi_payload_kind(struct cdds_ddsi_payload* p) {
+  return p->kind;
+}
+
+
 static bool cdds_sertopic_equal (const struct ddsi_sertopic *acmn, const struct ddsi_sertopic *bcmn)
 {
   // no fields in stp beyond the common ones, and those are all checked for equality before this function is called
@@ -94,7 +120,7 @@ static struct ddsi_serdata *cdds_serdata_from_ser_iov (const struct ddsi_sertopi
 {
   printf("==> <cdds_serdata_from_ser_iov> for %s -- size %zu\n", tpcmn->name, size);
   struct cdds_ddsi_payload *zp = (struct cdds_ddsi_payload *)malloc(sizeof(struct cdds_ddsi_payload));
-  ddsi_serdata_init(&zp->sd, tpcmn, kind);  
+  ddsi_serdata_init(&zp->sd, tpcmn, kind);
   zp->size = size;
   zp->kind = kind;
   zp->payload = 0;
@@ -130,7 +156,31 @@ static struct ddsi_serdata *cdds_serdata_from_ser (const struct ddsi_sertopic *t
 }
 
 static struct ddsi_serdata *cdds_serdata_to_topicless (const struct ddsi_serdata *sd) {
+  printf("Called <cdds_serdata_to_topicless> \n");
   return ddsi_serdata_ref(sd);
+}
+
+static struct ddsi_serdata *cdds_to_ser_ref (const struct ddsi_serdata *serdata_common, size_t cdr_off, size_t cdr_sz, ddsrt_iovec_t *ref) {
+  printf("Called <cdds_to_ser_ref> \n");
+  struct cdds_ddsi_payload *pl = (struct cdds_ddsi_payload *)serdata_common;
+  // TODO: Address fragmentation
+  assert (cdr_off == 0 && cdr_sz == pl->size);
+
+  ref->iov_base = pl->payload;
+  ref->iov_len = pl->size;
+  return ddsi_serdata_ref(serdata_common);
+}
+
+static void cdds_to_ser (const struct ddsi_serdata *serdata_common, size_t off, size_t sz, void *buf) {
+  printf("Called <cdds_to_ser_ref> \n");
+  struct cdds_ddsi_payload *pl = (struct cdds_ddsi_payload *)serdata_common;
+  memcpy(buf, pl->payload, pl->size);
+}
+
+static void cdds_to_ser_unref (struct ddsi_serdata *serdata_common, const ddsrt_iovec_t *ref) {
+  printf("Called <sd_to_ser_unref> \n");
+  (void)serdata_common;
+  free(ref->iov_base);
 }
 
 static const struct ddsi_serdata_ops cdds_serdata_ops = {
@@ -138,9 +188,17 @@ static const struct ddsi_serdata_ops cdds_serdata_ops = {
   .eqkey = cdds_serdata_eqkey,
   .from_ser = cdds_serdata_from_ser,
   .from_ser_iov = cdds_serdata_from_ser_iov,
-  .to_topicless = cdds_serdata_to_topicless
+  .to_topicless = cdds_serdata_to_topicless,
+  .to_ser = cdds_to_ser,
+  .to_ser_ref = cdds_to_ser_ref,
+  .to_ser_unref = cdds_to_ser_unref
 };
 
+struct ddsi_sertopic* cdds_create_blob_sertopic(dds_entity_t dp, char *topic_name, char* type_name, bool is_keyless) {
+  struct ddsi_sertopic *st = (struct ddsi_sertopic*) malloc(sizeof(struct ddsi_sertopic));
+  ddsi_sertopic_init (st, topic_name, type_name, &cdds_sertopic_ops, &cdds_serdata_ops, is_keyless);
+  return st;
+}
 
 dds_entity_t cdds_create_blob_topic(dds_entity_t dp, char *topic_name, char* type_name, bool is_keyless) {
   struct ddsi_sertopic *st = (struct ddsi_sertopic*) malloc(sizeof(struct ddsi_sertopic));

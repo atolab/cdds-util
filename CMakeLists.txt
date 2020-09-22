@@ -14,10 +14,12 @@ endif()
 
 target_link_libraries(cdds-util ddsc)
 
-option(BUILD_CDDS_UTIL_EXAMPLES "Build cdds-util examples" OFF)
+option(BUILD_CDDS_UTIL_EXAMPLES "Build cdds-util examples" ON)
 if(BUILD_CDDS_UTIL_EXAMPLES)
     add_executable(bsub example/blob_subscriber.c)
     target_link_libraries(bsub ddsc cdds-util)
+    add_executable(bbridge example/blob_bridge.c)
+    target_link_libraries(bbridge ddsc cdds-util)
     install(TARGETS bsub DESTINATION bin)
 endif()
 
