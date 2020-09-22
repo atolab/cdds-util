@@ -6,7 +6,11 @@ enable_testing()
 
 include_directories(./include /usr/local/include)
 link_directories(/usr/local/lib)
-add_library(cdds-util SHARED src/cdds_blob.c)
+if (BUILD_SHARED_LIBS OR NOT DEFINED BUILD_SHARED_LIBS)
+    add_library(cdds-util SHARED src/cdds_blob.c)
+else()
+    add_library(cdds-util src/cdds_blob.c)
+endif()
 
 target_link_libraries(cdds-util ddsc)
 
