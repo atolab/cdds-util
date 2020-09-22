@@ -19,3 +19,4 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
 
 install(TARGETS cdds-util DESTINATION lib)
+install(DIRECTORY include/cdds DESTINATION include)
