@@ -5,18 +5,20 @@ int main(int argc, char *argv[])
 {
   char* partition = NULL;
 
-  if (argc < 3) {
-    printf("USAGE:\n\tsub <topic-name> <type_name> [<partition>]\n");
+  if (argc < 4) {
+    printf("USAGE:\n\tsub <topic-name> <type_name> <1|0, 1 => keyless and 0 => keyed> [<partition>]\n");
     exit(1);
   }
-  if (argc > 3) {
-    partition = argv[3];
+  if (argc > 4) {
+    partition = argv[4];
   }
-
+  int keyless;
+  sscanf(argv[3], "%d", &keyless);
+  printf("keyless = %d\n", keyless);
   dds_return_t rc;
 
   const dds_entity_t dp = dds_create_participant (DDS_DOMAIN_DEFAULT, NULL, NULL);
-  const dds_entity_t tp = cdds_create_blob_topic(dp, argv[1], argv[2], true);
+  const dds_entity_t tp = cdds_create_blob_topic(dp, argv[1], argv[2], keyless == 1);
 
   dds_qos_t *qos = NULL;
   if (partition != NULL) {
