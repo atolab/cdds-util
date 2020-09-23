@@ -1,3 +1,4 @@
+#include <string.h>
 #include "cdds/cdds_util.h"
 
 

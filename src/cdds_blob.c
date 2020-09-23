@@ -1,3 +1,6 @@
+#include <assert.h>
+#include <limits.h>
+#include <string.h>
 #include "cdds/cdds_util.h"
 
 struct cdds_ddsi_payload* cdds_ddsi_payload_create(struct ddsi_sertopic *st, enum ddsi_serdata_kind kind, unsigned char* buf, size_t size) {

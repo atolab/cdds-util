@@ -1,22 +1,10 @@
 #ifndef ATOLAB_CDDS_UTIL_H_
 #define ATOLAB_CDDS_UTIL_H_
 
-#include <assert.h>
-#include <limits.h>
-#include <string.h>
-
-#include "dds/ddsrt/mh3.h"
-#include "dds/ddsrt/md5.h"
-#include "dds/ddsrt/bswap.h"
 
 #include "dds/dds.h"
 #include "dds/ddsi/ddsi_serdata.h"
 #include "dds/ddsi/q_radmin.h"
-
-#include "dds/dds.h"
-#include "dds/ddsrt/atomics.h"
-#include "dds/ddsrt/process.h"
-#include "dds/ddsrt/threads.h"
 
 struct cdds_ddsi_payload {
   struct ddsi_serdata sd;
