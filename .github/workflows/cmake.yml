@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Create Build Environment
+    - name: Install Cyclone DDS
       run: |
         mkdir -p ${{runner.workspace}}/work
         cd ${{runner.workspace}}/work
