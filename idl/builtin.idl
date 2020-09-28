@@ -1,0 +1,12 @@
+struct NameValue {
+    string name;
+    string value;
+};
+#pragma keylist NameValue
+
+struct KeyValue {
+    string key;
+    string value;
+};
+
+#pragma keylist KeyValue key
