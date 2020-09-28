@@ -284,7 +284,7 @@ static void sd_to_ser_unref (struct ddsi_serdata *serdata_common, const ddsrt_io
 {
   // const "ref" is a mistake in the interface ... it is owned by this code ...
   (void) serdata_common;
-  free ((void *) ref->iov_base);
+  // free ((void *) ref->iov_base);
 }
 
 static void sd_to_ser (const struct ddsi_serdata *serdata_common, size_t off, size_t sz, void *buf)
